@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductoDTO {
-
-	
-	private String productos_id;
+    private Integer productos_id; // Cambiado a Integer
     private String nombre;
     private double precio;
     private int stock;

@@ -6,7 +6,5 @@ import lombok.Data;
 @Data
 public class FacturaDTO {
     private Integer clienteId;
-    private List<ProductoFacturaDTO> productos;  // Nueva lista de objetos ProductoFacturaDTO para incluir cantidad
+    private List<ProductoFacturaDTO> productos; 
 }
-
-

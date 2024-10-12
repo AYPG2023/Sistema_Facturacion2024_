@@ -1,27 +1,35 @@
 package com.sistema.ap.app.entity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.io.Serializable;
 
+@Data
 @Entity
 @Table(name = "factura_productos")
-@Data
+@IdClass(FacturaProductoId.class) 
 @NoArgsConstructor
 @AllArgsConstructor
 public class FacturaProducto {
 
+
+	@Id
+    @Column(name = "factura_id") // Nombre de columna en la base de datos
+    private Integer facturaId;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @ManyToOne
-    @JoinColumn(name = "factura_id", nullable = false)
-    private Factura factura;
-
-    @ManyToOne
-    @JoinColumn(name = "producto_id", nullable = false)
-    private Producto producto;
+    @Column(name = "producto_id") // Nombre de columna en la base de datos
+    private Integer productoId;
 
     private Integer cantidad;
+
+    @ManyToOne
+    @JoinColumn(name = "factura_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Factura factura;  // Relación con Factura
+
+    @ManyToOne
+    @JoinColumn(name = "producto_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Producto producto; // Relación con Producto
 }

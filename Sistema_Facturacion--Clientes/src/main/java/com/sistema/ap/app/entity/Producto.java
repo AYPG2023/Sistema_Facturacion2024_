@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,10 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Producto {
 
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Usa auto-incremento
-    @Column(name = "productos_id", updatable = false, nullable = false)
-    private Integer productos_id;  // El id es generado automáticamente
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Integer id;  // ID generado automáticamente
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Column(nullable = false, length = 100)

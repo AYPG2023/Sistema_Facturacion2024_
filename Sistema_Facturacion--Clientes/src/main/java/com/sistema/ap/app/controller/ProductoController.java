@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.sistema.ap.app.entity.Producto;
+import com.sistema.ap.app.entity.ApiResponse;  // Importa ApiResponse
 import com.sistema.ap.app.services.IProducto;
-
 
 @RestController
 @RequestMapping("/productos")
@@ -17,34 +17,39 @@ public class ProductoController {
     @Autowired
     protected IProducto productosService;
 
+    // Método para obtener todos los productos
     @GetMapping
-    public ResponseEntity<List<Producto>> getAllProductos() {
-        return ResponseEntity.ok(productosService.findAll());
+    public ResponseEntity<ApiResponse<List<Producto>>> getAllProductos() {
+        List<Producto> productos = productosService.findAll();  // Obtiene la lista de productos
+        return ResponseEntity.ok(new ApiResponse<>(productos, "Lista de productos", true));  // Retorna la lista en ApiResponse
     }
 
+    // Método para guardar un nuevo producto
     @PostMapping("/save")
-    public ResponseEntity<Producto> save(@RequestBody Producto productos) {
-        return ResponseEntity.ok(productosService.save(productos));
+    public ResponseEntity<ApiResponse<Producto>> save(@RequestBody Producto productos) {
+        Producto savedProducto = productosService.save(productos);  // Guarda el producto
+        return ResponseEntity.ok(new ApiResponse<>(savedProducto, "Producto agregado correctamente", true));  // Respuesta estructurada
     }
 
+    // Método para actualizar un producto existente
     @PutMapping(path = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Producto> update(@PathVariable("id") Integer id, @RequestBody Producto productos) {
-        Producto updatedProductos = productosService.update(id, productos);
+    public ResponseEntity<ApiResponse<Producto>> update(@PathVariable("id") Integer id, @RequestBody Producto productos) {
+        Producto updatedProductos = productosService.update(id, productos);  // Actualiza el producto
         if (updatedProductos != null) {
-            return ResponseEntity.ok(updatedProductos);
+            return ResponseEntity.ok(new ApiResponse<>(updatedProductos, "Producto actualizado exitosamente", true));
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(new ApiResponse<>(null, "Producto no encontrado", false));
         }
     }
 
-
+    // Método para eliminar un producto
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Integer id) { // Usa Integer
-        Integer response = productosService.deleteById(id);
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("id") Integer id) {
+        Integer response = productosService.deleteById(id);  // Intenta eliminar el producto
         if (response == 204) {
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.ok(new ApiResponse<>(null, "Producto eliminado exitosamente", true));
         } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity.status(404).body(new ApiResponse<>(null, "Producto no encontrado", false));
         }
     }
 }
