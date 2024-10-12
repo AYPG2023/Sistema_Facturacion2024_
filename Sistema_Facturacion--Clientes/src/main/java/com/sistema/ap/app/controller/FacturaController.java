@@ -50,8 +50,8 @@ public class FacturaController {
     @GetMapping("/{id}")
     @Transactional // Asegura que hay una sesión activa para cargar productos
     public ResponseEntity<ApiResponse<FacturaResponseDTO>> getFacturaById(@PathVariable("id") Integer id) {
-        // Buscar la factura por ID usando el facturaRepository
-        Optional<Factura> facturaOpt = facturaRepository.findById(id);
+        // Usar el método que incluye JOIN FETCH para cargar los productos
+        Optional<Factura> facturaOpt = facturaRepository.findByIdWithProductos(id);
         if (facturaOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(null, "Factura no encontrada", false));
         }
@@ -63,13 +63,12 @@ public class FacturaController {
 
         // Obtener los productos asociados a la factura
         for (FacturaProducto fp : factura.getProductos()) {
-            Producto producto = fp.getProducto(); // Asumiendo que tienes una relación entre FacturaProducto y Producto
+            Producto producto = fp.getProducto(); 
             if (producto != null) {
-                // Agregar producto a la lista de productos adquiridos
                 productosAdquiridos.add(new ProductoAdquiridoDTO(
-                    producto.getNombre(),    // Nombre del producto
-                    producto.getPrecio(),    // Precio del producto
-                    fp.getCantidad()         // Cantidad comprada
+                    producto.getNombre(),    
+                    producto.getPrecio(),    
+                    fp.getCantidad()         
                 ));
             }
         }
@@ -80,11 +79,14 @@ public class FacturaController {
             factura.getCliente().getNombre(),
             factura.getTotal(),
             factura.getFecha(),
-            productosAdquiridos // Lista de productos adquiridos
+            productosAdquiridos,
+            factura.getDireccionEmpresa()
         );
 
         return ResponseEntity.ok(new ApiResponse<>(facturaResponse, "Factura obtenida con éxito", true));
     }
+
+
 
     // Crear nueva factura
     @PostMapping("/create")
@@ -146,14 +148,16 @@ public class FacturaController {
         // Guardar la factura
         Factura facturaGuardada = facturaRepository.save(nuevaFactura);
 
-        // Crear respuesta DTO con la información requerida
+     // Crear respuesta DTO con la información requerida
         FacturaResponseDTO respuestaFactura = new FacturaResponseDTO(
             facturaGuardada.getId(),
             cliente.getNombre(),
             facturaGuardada.getTotal(),
             facturaGuardada.getFecha(),
-            productosAdquiridos
+            productosAdquiridos,  // Aquí faltaba la coma
+            facturaGuardada.getDireccionEmpresa() // Incluir la dirección correctamente
         );
+
 
         // Devolver la respuesta con la factura creada
         return ResponseEntity.ok(new ApiResponse<>(respuestaFactura, "Factura creada exitosamente. Cliente: " + cliente.getNombre() + ", Total: " + total, true));

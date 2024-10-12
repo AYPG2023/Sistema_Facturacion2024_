@@ -16,4 +16,5 @@ public class FacturaResponseDTO {
     private Double total;
     private LocalDateTime fecha;
     private List<ProductoAdquiridoDTO> productos; // Cambiar de ProductoFacturaDTO a ProductoAdquiridoDTO
+    private String direccionEmpresa; 
 }
